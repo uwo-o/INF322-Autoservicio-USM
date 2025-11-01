@@ -9,7 +9,7 @@ const System: React.FC = () => {
         { label: 'Resumen movimientos', route: '/summary' },
         { label: 'Pagar', route: '/charges' },
         { label: 'Becas y pagos recibidos', route: '/scholarship' },
-        { label: 'Datos personales', route: '/personal-data' },
+        //{ label: 'Datos personales', route: '/personal-data' },
     ];
 
     return (
