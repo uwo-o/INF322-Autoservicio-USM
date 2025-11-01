@@ -169,7 +169,7 @@ export default function UserProfile({ loggedIn }: Props) {
               <div className="px-6 pb-6 flex justify-end gap-3">
                 <Button
                   type="button"
-                  className="bg-gray-200 text-gray-800 hover:bg-gray-300"
+                  className="text-gray-800 hover:bg-red-500 bg-usm-red"
                   onClick={handleCancel}
                 >
                   Cancelar
