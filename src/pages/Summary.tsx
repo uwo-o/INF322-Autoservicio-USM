@@ -15,7 +15,7 @@ const movements: Movement[] = [
   { fecha: '13-ENE-2025', codigo: 'MTRD', descripcion: 'MATRICULA PREGRADO DIURNO', cargo: 130000, pago: 0, tipoPago: 'Arancel' },
 ];
 
-const Summary: React.FC = () => {
+export const Summary: React.FC = () => {
   const totalCargos = movements.reduce((sum, m) => sum + m.cargo, 0);
   const totalPagos = movements.reduce((sum, m) => sum + m.pago, 0);
 

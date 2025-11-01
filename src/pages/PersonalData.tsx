@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '../components/Button';
 
-const PersonalData: React.FC = () => {
+export const PersonalData: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     nombre: 'Juan Pérez',

@@ -34,7 +34,7 @@ const groupByYear = (payments: Payment[]) => {
   return grouped;
 };
 
-const ScholarshipPayments: React.FC = () => {
+export const ScholarshipPayments: React.FC = () => {
   const groupedPayments = groupByYear(payments);
   const sortedYears = Object.keys(groupedPayments).sort((a, b) => Number(b) - Number(a));
   

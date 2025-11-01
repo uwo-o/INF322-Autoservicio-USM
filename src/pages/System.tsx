@@ -1,15 +1,31 @@
 import React from 'react';
 import { Button } from '../components/Button';
 import { useNavigate } from 'react-router-dom';
+import {Summary} from './Summary'
+import {Charges} from './Charges'
+import {ScholarshipPayments} from './Scholarship'
+import {PersonalData} from './PersonalData'
+
+const GreyBox: React.FC<{ content: () => React.ReactNode }> = ({ content }) => {
+  const style = {
+    border: '2px solid grey',
+    padding: '20px',
+    margin: '10px',
+    backgroundColor: '#f4f4f4',
+  };
+
+  return <div style={style}>{content()}</div>;
+};
+
 
 const System: React.FC = () => {
     const navigateTo = useNavigate();
 
     const actions = [
-        { label: 'Resumen movimientos', route: '/summary' },
-        { label: 'Pagar', route: '/charges' },
-        { label: 'Becas y pagos recibidos', route: '/scholarship' },
-        { label: 'Datos personales', route: '/personal-data' },
+        { label: 'Resumen movimientos', fn: Summary },
+        { label: 'Pagar', fn: Charges },
+        { label: 'Becas y pagos recibidos', fn: ScholarshipPayments },
+        { label: 'Datos personales', fn: PersonalData },
     ];
 
     return (
@@ -21,17 +37,12 @@ const System: React.FC = () => {
             <div className="w-full flex justify-center space-x-4 flex-wrap">
                 {actions.map((action, index) => (
                     <div key={index}>
-                        <Button
-                            onClick={() => navigateTo(action.route)}
-                            className="text-center whitespace-nowrap min-w-max"
-                        >
-                            {action.label}
-                        </Button>
+                        <GreyBox content={() => <action.fn />}/>
                     </div>
                 ))}
             </div>
         </div>
     );
-};
+};  
 
 export default System;

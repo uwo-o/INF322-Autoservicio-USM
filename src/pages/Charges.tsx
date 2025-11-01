@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '../components/Button';
 
-const Charges: React.FC = () => {
+export const Charges: React.FC = () => {
   const documentos = [
     { id: 1, descripcion: 'Matrícula 2024', saldo: 65000, pagado: false },
     { id: 2, descripcion: 'Arancel Marzo', saldo: 500000, pagado: true },
