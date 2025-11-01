@@ -12,7 +12,6 @@ export interface UserProfileData {
 type Props = { loggedIn: boolean };
 
 export default function UserProfile({ loggedIn }: Props) {
-  // Hooks SIEMPRE arriba, sin condiciones
   const [formData, setFormData] = useState<UserProfileData>({
     nombre: 'Juan Pérez',
     numeroCuenta: '12345678',
@@ -46,32 +45,37 @@ export default function UserProfile({ loggedIn }: Props) {
     setModalOpen(false);
   };
 
-  // Recién acá puedes cortar el render si no hay sesión
   if (!loggedIn) return null;
 
   return (
     <>
       {/* Bloque fijo arriba a la derecha */}
       <div className="absolute right-4 top-0 h-10 z-40">
-        <div className="h-full inline-flex items-center gap-2 whitespace-nowrap">
-          <UserCircleIcon className="w-6 h-6 text-usm-light shrink-0 select-none" />
-          <span className="text-sm select-none text-usm-light">{formData.nombre}</span>
-          <button
-            type="button"
-            className="p-1 rounded hover:bg-white/10 transition shrink-0"
-            aria-label="Abrir menú usuario"
-            onClick={() => setMenuOpen(v => !v)}
-          >
-            <ChevronDownIcon
-              className={`w-5 h-5 transition-transform ${menuOpen ? 'rotate-180' : ''}`}
-            />
-          </button>
-        </div>
+        <button
+          type="button"
+          id="user-trigger"
+          aria-haspopup="menu"
+          aria-expanded={menuOpen}
+          aria-controls="user-menu"
+          onClick={() => setMenuOpen(v => !v)}
+          className="h-full inline-flex items-center gap-2 whitespace-nowrap p-1 rounded hover:bg-white/10 transition select-none"
+        >
+          <UserCircleIcon className="w-6 h-6 text-usm-light shrink-0" />
+          <span className="text-sm text-usm-light">{formData.nombre}</span>
+          <ChevronDownIcon
+            className={`w-5 h-5 transition-transform ${menuOpen ? 'rotate-180' : ''}`}
+          />
+        </button>
       </div>
 
       {/* Panel flotante */}
       {menuOpen && (
-        <div className="absolute right-4 top-10 mt-2 w-72 bg-white rounded-lg shadow-lg border border-gray-200 z-40">
+        <div
+          id="user-menu"
+          role="menu"
+          aria-labelledby="user-trigger"
+          className="absolute right-4 top-10 mt-2 w-72 bg-white rounded-lg shadow-lg border border-gray-200 z-40"
+        >
           <div className="p-4 space-y-2 text-sm text-gray-700">
             <div className="font-semibold text-gray-900">Datos del usuario</div>
             <div className="flex items-center justify-between">
