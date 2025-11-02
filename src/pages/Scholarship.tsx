@@ -37,11 +37,11 @@ const groupByYear = (payments: Payment[]) => {
 export const ScholarshipPayments: React.FC = () => {
   const groupedPayments = groupByYear(payments);
   const sortedYears = Object.keys(groupedPayments).sort((a, b) => Number(b) - Number(a));
-  
+
   const [selectedYear, setSelectedYear] = useState(sortedYears[0]);
 
   return (
-    <div className="p-4 max-w-6xl mx-auto">
+    <div className="p-4 w-full mx-0">
       <h1 className="text-usm-dark text-2xl mb-4">Becas y Pagos Recibidos</h1>
       <p className="text-usm-blue mb-6">Registro de becas, pagos y documentos asociados por año.</p>
 
