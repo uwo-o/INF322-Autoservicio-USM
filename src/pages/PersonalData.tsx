@@ -1,29 +1,71 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '../components/Button';
+import { Notification } from '../components/Notification';
+import { UserProfileData } from '../components/UserProfile';
 
-export const PersonalData: React.FC = () => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
+const STORAGE_KEY = 'usm_userData';
+
+const getInitialData = (): UserProfileData => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try {
+      return JSON.parse(saved);
+    } catch {
+      // Si hay error, usar valores por defecto
+    }
+  }
+  return {
     nombre: 'Juan Pérez',
     numeroCuenta: '12345678',
     banco: 'Banco de Chile',
     tipoCuenta: 'Cuenta Corriente',
-  });
+  };
+};
+
+export const PersonalData: React.FC = () => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState<UserProfileData>(getInitialData);
+  const [showNotification, setShowNotification] = useState(false);
+
+  // Sincronizar con cambios desde UserProfile
+  useEffect(() => {
+    const handleDataUpdate = (event: Event) => {
+      const customEvent = event as CustomEvent<UserProfileData>;
+      setFormData(customEvent.detail);
+    };
+    window.addEventListener('userDataUpdated', handleDataUpdate);
+    return () => window.removeEventListener('userDataUpdated', handleDataUpdate);
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleEdit = () => setIsEditing(true);
-  const handleCancel = () => setIsEditing(false);
-  const handleSave = () => {
-    console.log('Datos guardados', formData);
+  const handleCancel = () => {
     setIsEditing(false);
+    // Restaurar datos desde localStorage
+    setFormData(getInitialData());
+  };
+  
+  const handleSave = () => {
+    // Guardar en localStorage
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+    // Disparar evento para sincronizar con UserProfile
+    window.dispatchEvent(new CustomEvent('userDataUpdated', { detail: formData }));
+    setIsEditing(false);
+    setShowNotification(true);
   };
 
   return (
-    <div className="p-4 max-w-lg mx-auto bg-usm-light rounded shadow mt-12">
-      <h1 className="text-usm-dark text-2xl">Mis Datos Personales</h1>
+    <>
+      <Notification
+        message="¡Datos guardados exitosamente! Los cambios se reflejarán en tu perfil."
+        show={showNotification}
+        onClose={() => setShowNotification(false)}
+      />
+      <div className="p-4 max-w-lg mx-auto bg-usm-light rounded shadow mt-12">
+        <h1 className="text-usm-dark text-2xl">Mis Datos Personales</h1>
       <form className="space-y-4">
         <div>
           <label className="block text-gray-700 mb-1">Nombre</label>
@@ -91,7 +133,8 @@ export const PersonalData: React.FC = () => {
           )}
         </div>
       </form>
-    </div>
+      </div>
+    </>
   );
 };
 

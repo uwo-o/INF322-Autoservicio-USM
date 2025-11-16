@@ -7,12 +7,19 @@ import UserProfile from './UserProfile';
 
 
 function Header() {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(() => {
+    // Cargar estado de login desde localStorage
+    const saved = localStorage.getItem('usm_loggedIn');
+    return saved === 'true';
+  });
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    if (!loggedIn && location.pathname !== '/') {
+    // Guardar estado de login en localStorage
+    localStorage.setItem('usm_loggedIn', loggedIn.toString());
+    
+    if (!loggedIn && location.pathname !== '/' && location.pathname !== '/payment') {
       navigate('/');
     }
   }, [loggedIn, location.pathname, navigate]);
@@ -22,9 +29,11 @@ function Header() {
   const handleLoginClick = () => {
     if (loggedIn) {
       setLoggedIn(false);
+      localStorage.setItem('usm_loggedIn', 'false');
       navigate('/');
     } else {
       setLoggedIn(true);
+      localStorage.setItem('usm_loggedIn', 'true');
       navigate('/system');
     }
   };

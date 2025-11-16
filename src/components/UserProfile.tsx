@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { UserCircleIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { Button } from './Button';
+import { Notification } from './Notification';
 
 export interface UserProfileData {
   nombre: string;
@@ -9,18 +10,50 @@ export interface UserProfileData {
   tipoCuenta: string;
 }
 
-type Props = { loggedIn: boolean };
+const STORAGE_KEY = 'usm_userData';
 
-export default function UserProfile({ loggedIn }: Props) {
-  const [formData, setFormData] = useState<UserProfileData>({
+const getInitialData = (): UserProfileData => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try {
+      return JSON.parse(saved);
+    } catch {
+      // Si hay error, usar valores por defecto
+    }
+  }
+  return {
     nombre: 'Juan Pérez',
     numeroCuenta: '12345678',
     banco: 'Banco de Chile',
     tipoCuenta: 'Cuenta Corriente',
-  });
+  };
+};
+
+type Props = { loggedIn: boolean };
+
+export default function UserProfile({ loggedIn }: Props) {
+  const [formData, setFormData] = useState<UserProfileData>(getInitialData);
   const [draftData, setDraftData] = useState<UserProfileData>(formData);
   const [menuOpen, setMenuOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
+
+  // Sincronizar con localStorage cuando cambie formData
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+    // Disparar evento personalizado para sincronizar con PersonalData
+    window.dispatchEvent(new CustomEvent('userDataUpdated', { detail: formData }));
+  }, [formData]);
+
+  // Escuchar cambios desde PersonalData
+  useEffect(() => {
+    const handleDataUpdate = (event: Event) => {
+      const customEvent = event as CustomEvent<UserProfileData>;
+      setFormData(customEvent.detail);
+    };
+    window.addEventListener('userDataUpdated', handleDataUpdate);
+    return () => window.removeEventListener('userDataUpdated', handleDataUpdate);
+  }, []);
 
   useEffect(() => {
     if (modalOpen) setDraftData(formData);
@@ -40,6 +73,7 @@ export default function UserProfile({ loggedIn }: Props) {
   const handleSave = () => {
     setFormData(draftData);
     setModalOpen(false);
+    setShowNotification(true);
   };
   const handleCancel = () => {
     setModalOpen(false);
@@ -49,6 +83,11 @@ export default function UserProfile({ loggedIn }: Props) {
 
   return (
     <>
+      <Notification
+        message="¡Datos guardados exitosamente!"
+        show={showNotification}
+        onClose={() => setShowNotification(false)}
+      />
       {/* Bloque fijo arriba a la derecha */}
       <div className="absolute right-4 top-0 h-10 z-40">
         <button

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/Button';
 
 export const Charges: React.FC = () => {
+  const navigate = useNavigate();
   const documentos = [
     { id: 1, descripcion: 'Matrícula 2024', saldo: 65000, pagado: false },
     { id: 2, descripcion: 'Arancel Marzo', saldo: 500000, pagado: true },
@@ -21,8 +23,14 @@ export const Charges: React.FC = () => {
     .reduce((acc, doc) => acc + doc.saldo, 0);
 
   const handlePay = () => {
-    alert(`Pagado documento: ${selected.join(', ')}\nTotal: $${total.toLocaleString()}`);
-    setSelected([]);
+    const selectedDocs = documentos.filter((doc) => selected.includes(doc.id));
+    navigate('/payment', {
+      state: {
+        documentos: selectedDocs.map((doc) => doc.id),
+        total: total,
+        descripciones: selectedDocs.map((doc) => doc.descripcion),
+      },
+    });
   };
 
   return (
